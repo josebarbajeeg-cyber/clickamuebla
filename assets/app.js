@@ -249,9 +249,14 @@
   }), { threshold: .6 });
   $$("[data-count]").forEach(el => io.observe(el));
 
-  /* ---------- tapicería ---------- */
-  const COLORS = [["Crema", "#EDE4D3"], ["Arena", "#CBB89A"], ["Camel", "#8A6F4B"], ["Chocolate", "#5B4332"], ["Gris perla", "#9AA1A8"], ["Gris azulado", "#46586B"], ["Azul marino", "#243E5E"], ["Verde salvia", "#5E7C69"], ["Rojo", "#A83430"], ["Ámbar", "#D68A2A"], ["Ciruela", "#7B4F6D"], ["Carbón", "#2B2825"]];
-  const swEl = $("#swatches"), tapName = $("#tapName"), demo = $(".tap__demo"), tapWa = $("#tapWa");
+  /* ---------- tapicería: foto real recoloreada ---------- */
+  const COLORS = [["Crema", "#EDE4D3", "crema"], ["Arena", "#CBB89A", "arena"], ["Camel", "#8A6F4B", "camel"], ["Chocolate", "#5B4332", "chocolate"], ["Gris perla", "#9AA1A8", "gris-perla"], ["Gris azulado", "#46586B", "gris-azulado"], ["Azul marino", "#243E5E", "azul-marino"], ["Verde salvia", "#5E7C69", "verde-salvia"], ["Rojo", "#A83430", "rojo"], ["Ámbar", "#D68A2A", "ambar"], ["Ciruela", "#7B4F6D", "ciruela"], ["Carbón", "#2B2825", "carbon"]];
+  const TAP_MODEL = P[12];
+  const tapSrc = i => `assets/img/tapiceria/${COLORS[i][2]}.webp`;
+  const swEl = $("#swatches"), tapName = $("#tapName"), tapWa = $("#tapWa");
+  const tapImgs = [$("#tapImgA"), $("#tapImgB")];
+  let tapFront = 0, tapCur = 0, tapLoaded = false;
+  $("#tapModel").textContent = TAP_MODEL.name;
   COLORS.forEach(([n, c], i) => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "sw"; b.style.setProperty("--c", c); b.setAttribute("role", "radio");
@@ -261,10 +266,25 @@
   });
   function pick(i) {
     $$(".sw", swEl).forEach((s, k) => s.setAttribute("aria-checked", k === i));
-    demo.style.setProperty("--sw", COLORS[i][1]); tapName.textContent = COLORS[i][0];
-    tapWa.href = waLink(`Hola, me interesa una sala en color ${COLORS[i][0].toLowerCase()}. ¿Me pueden mostrar el muestrario de tapicería?`);
+    tapName.textContent = COLORS[i][0];
+    tapWa.href = waLink(`Hola, me interesa la ${TAP_MODEL.name.toLowerCase()} (${TAP_MODEL.id}) en color ${COLORS[i][0].toLowerCase()}. ¿Me pueden dar más información?`);
+    if (i === tapCur) return;
+    const next = tapImgs[1 - tapFront];
+    const show = () => {
+      next.onload = null;
+      next.alt = `${TAP_MODEL.name} en tapicería color ${COLORS[i][0].toLowerCase()}`;
+      next.classList.add("is-on"); tapImgs[tapFront].classList.remove("is-on");
+      tapFront = 1 - tapFront; tapCur = i;
+    };
+    next.onload = show;
+    next.src = tapSrc(i);
+    if (next.complete && next.naturalWidth) show();
   }
   pick(0);
+  /* precarga las 12 fotos cuando la sección está cerca */
+  new IntersectionObserver((es, o) => {
+    if (es[0].isIntersecting && !tapLoaded) { tapLoaded = true; COLORS.forEach((_, i) => { const im = new Image(); im.src = tapSrc(i); }); o.disconnect(); }
+  }, { rootMargin: "600px 0px" }).observe($("#tapiceria"));
 
   /* ---------- fotos ampliadas (reseñas y Colima) ---------- */
   const lb = $("#lightbox"), lbImg = $("#lbImg");
@@ -279,14 +299,24 @@
   }));
 
   /* ---------- video de portada ---------- */
-  const cv = $("#coverVideo");
+  const cv = $("#coverVideo"), cvBtn = $("#coverToggle");
   if (cv) {
-    if (reduce) cv.pause();
-    else cv.play().catch(() => {});
-    new IntersectionObserver(es => es.forEach(e => {
-      if (reduce) return;
-      e.isIntersecting ? cv.play().catch(() => {}) : cv.pause();
-    })).observe(cv);
+    let userPaused = false;
+    cv.muted = true; cv.defaultMuted = true; cv.playsInline = true;
+    const go = () => { if (!userPaused) cv.play().catch(() => {}); };
+    go();
+    cv.addEventListener("loadeddata", go);
+    cv.addEventListener("canplay", go);
+    /* si el navegador bloqueó el autoplay, arranca con la primera interacción */
+    ["pointerdown", "touchstart", "keydown", "scroll"].forEach(ev => addEventListener(ev, go, { once: true, passive: true }));
+    document.addEventListener("visibilitychange", () => { if (!document.hidden) go(); });
+    new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) go(); else cv.pause(); })).observe(cv);
+    cvBtn.addEventListener("click", () => {
+      userPaused = !cv.paused;
+      userPaused ? cv.pause() : cv.play().catch(() => {});
+      cvBtn.setAttribute("aria-pressed", userPaused);
+      cvBtn.setAttribute("aria-label", userPaused ? "Reproducir video de fondo" : "Pausar video de fondo");
+    });
   }
 
   /* ---------- formulario → WhatsApp ---------- */

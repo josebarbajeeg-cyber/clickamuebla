@@ -13,7 +13,7 @@
 <meta property="og:title" content="Click Amuebla | Muebles de fábrica en Tonalá y Colima">
 <meta property="og:description" content="Salas, comedores y recámaras directo de fábrica. Modelos en existencia con entrega inmediata.">
 <meta property="og:image" content="assets/img/m14-full.webp">
-<link rel="preload" href="assets/video/hero-poster.jpg" as="image">
+<link rel="preload" href="assets/video/hero-poster.jpg?v=2" as="image">
 <link rel="preload" href="assets/fonts/Archivo.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/styles.css">
 <script type="application/ld+json">
@@ -79,8 +79,8 @@
 <main>
 <!-- PORTADA CON VIDEO -->
 <section class="cover" id="inicio" aria-labelledby="h1">
-  <video class="cover__video" id="coverVideo" autoplay muted loop playsinline preload="auto" poster="assets/video/hero-poster.jpg" aria-hidden="true" tabindex="-1">
-    <source src="assets/video/hero.mp4" type="video/mp4">
+  <video class="cover__video" id="coverVideo" autoplay muted loop playsinline preload="auto" poster="assets/video/hero-poster.jpg?v=2" aria-hidden="true" tabindex="-1">
+    <source src="assets/video/hero.mp4?v=2" type="video/mp4">
   </video>
   <div class="cover__veil" aria-hidden="true"></div>
   <div class="wrap cover__in">
@@ -96,6 +96,7 @@
       <a class="btn btn--line" href="#visitanos">Nuestras sucursales</a>
     </div>
   </div>
+  <button class="cover__pause" id="coverToggle" type="button" aria-label="Pausar video de fondo" aria-pressed="false"><svg class="i-pause" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M8 5v14M16 5v14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><svg class="i-play" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M8 5.5v13l11-6.5-11-6.5Z" fill="currentColor"/></svg></button>
   <a class="cover__scroll" href="#destacados" aria-label="Bajar al contenido"></a>
 </section>
 
@@ -196,39 +197,17 @@
 <!-- TAPICERIA -->
 <section class="tap" id="tapiceria" aria-labelledby="tapTitle">
   <div class="wrap tap__grid">
-    <div class="tap__demo" aria-hidden="true">
-      <svg class="sofa" id="sofa" viewBox="0 0 640 380" role="img" aria-label="Sofá que cambia de color">
-        <defs>
-          <linearGradient id="gShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".22"/><stop offset=".55" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".32"/></linearGradient>
-          <linearGradient id="gSide" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#000" stop-opacity=".22"/><stop offset=".5" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".22"/></linearGradient>
-          <filter id="soft" x="-10%" y="-10%" width="120%" height="130%"><feGaussianBlur stdDeviation="9"/></filter>
-        </defs>
-        <ellipse cx="320" cy="344" rx="268" ry="16" fill="#000" opacity=".4" filter="url(#soft)"/>
-        <g class="sofa__fill">
-          <rect x="86" y="82" width="468" height="126" rx="44"/>
-          <rect x="34" y="150" width="96" height="168" rx="38"/>
-          <rect x="510" y="150" width="96" height="168" rx="38"/>
-          <rect x="112" y="196" width="416" height="96" rx="26"/>
-          <rect x="122" y="168" width="188" height="86" rx="26"/>
-          <rect x="330" y="168" width="188" height="86" rx="26"/>
-        </g>
-        <g fill="url(#gShade)">
-          <rect x="86" y="82" width="468" height="126" rx="44"/>
-          <rect x="34" y="150" width="96" height="168" rx="38"/>
-          <rect x="510" y="150" width="96" height="168" rx="38"/>
-          <rect x="112" y="196" width="416" height="96" rx="26"/>
-          <rect x="122" y="168" width="188" height="86" rx="26"/>
-          <rect x="330" y="168" width="188" height="86" rx="26"/>
-        </g>
-        <g fill="url(#gSide)"><rect x="34" y="150" width="96" height="168" rx="38"/><rect x="510" y="150" width="96" height="168" rx="38"/></g>
-        <g fill="#3a2b1e"><rect x="76" y="318" width="14" height="30" rx="4"/><rect x="550" y="318" width="14" height="30" rx="4"/><rect x="156" y="292" width="14" height="56" rx="4" opacity="0"/></g>
-      </svg>
-      <p class="tap__name" id="tapName" aria-live="polite">Crema</p>
+    <div class="tap__demo">
+      <div class="tap__stage">
+        <img class="tap__img is-on" id="tapImgA" src="assets/img/tapiceria/crema.webp" alt="Sala esquinera en tapicería color crema" width="1280" height="576">
+        <img class="tap__img" id="tapImgB" src="" alt="" width="1280" height="576" aria-hidden="true">
+      </div>
+      <p class="tap__name"><span id="tapName" aria-live="polite">Crema</span><small id="tapModel">Sala esquinera gris claro</small></p>
     </div>
     <div class="tap__copy">
       <p class="eyebrow">Tapicería</p>
       <h2 class="h2" id="tapTitle">Tu sala, en tu color.</h2>
-      <p class="lead">Más de 20 colores y texturas para elegir. Prueba aquí algunos tonos y pide el muestrario completo por WhatsApp.</p>
+      <p class="lead">Elige un color y mira cómo queda este modelo. Tenemos más de 20 colores y texturas; pide el muestrario completo por WhatsApp.</p>
       <div class="swatches" id="swatches" role="radiogroup" aria-label="Color de tapicería"></div>
       <a class="btn btn--solid" id="tapWa" href="#" target="_blank" rel="noopener">Pedir muestrario</a>
     </div>
